@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Front Page</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+    <div class="left">
+        <div class="frontpage" id="pageInfo">
+            <div class="pageInfo">
+                <div class="vtuIntro">VISVESVARAYA TECHNOLOGICAL UNIVERSITY, INANA SANGA <br>BELAGAVI-590 018, KARNATAKA</div>
+                <div class="UniversityLogo">
+                    <img src="../assets/vtulogo.png" alt="vtulogo">
+                </div>
+                <div class="typeON" style="text-transform: uppercase;"><span id="typeONText">Type of</span> REPORT</div>
+                <span style="padding: 10px;">ON</span>
+                <div class="projectTitle" id="projectTitleText"> "Enter Project Title”</div>
+                <div class="degreeType">Submitted in the partial fulfillment of the requirements for the <span class="changeAward" id="changeAwardText"> {Add Your Award} </span></div>
+                <div class="degreeName">B.E. in <span id="degreeNameText">Add Your degree name</span></div>
+                <div class="associate">PROJECT ASSOCIATES</div>
+
+                <div class="students" id="studentsContainer">
+                    <div class="student">
+                        <div class="name" id="nameText">Name</div>
+                        <div class="register" id="registerText">Register n.o</div>
+                    </div>
+                </div>
+
+                <div class="projectGuide">PROJECT GUIDES</div>
+                <div class="teacherContainer" id="teacherContainer">
+                    <div class="persons">
+                        <div class="teacherInfo">
+                            <span class="Tname" id="TnameText">Professor Name</span>
+                            <span class="qalification" id="qalificationText" style="font-size: 10px;">Qualification</span>
+                        </div>
+                        <div class="designation" id="designationText">Designation</div>
+                    </div>
+                </div>
+                <div class="UniversityLogo">
+                    <img src="../assets/biet.png" alt="bietlogo">
+                </div>
+                <div class="collegeINFO">
+                    Department of Computer Science and Engineering, <br>Bapuji Institute of Engineering & Technology. <br>Davangere-577004 2023-24
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="right">
+        <form id="editableForm">
+            <label for="typeON">Type On</label>
+            <input type="text" id="typeON" name="typeON" placeholder="Type On">
+
+            <label for="projectTitle">Project Title</label>
+            <input type="text" id="projectTitle" name="projectTitle" placeholder="Project Title">
+
+            <label for="changeAward">Change Award</label>
+            <input type="text" id="changeAward" name="changeAward" placeholder="Change Award">
+
+            <label for="degreeName">Degree Name</label>
+            <input type="text" id="degreeName" name="degreeName" placeholder="Degree Name">
+
+            <div class="Student">
+                <div class="shead">Student Details:<span><button class="TAdd" type="button" id="Sremove">Remove</button> <button class="SAdd" type="button" id="SAdd">ADD</button></span></div>
+                
+                <label for="name">Name</label>
+                <input type="text" id="name" name="name" placeholder="Name">
+    
+                <label for="register">Register</label>
+                <input type="text" id="register" name="register" placeholder="Register">
+            </div>
+
+            <div class="Teacher">
+                <div class="shead">Teacher Details:<span><button class="TAdd" type="button" id="Tremove">Remove</button> <button class="TAdd" type="button" id="TAdd">ADD</button></span></div>
+
+                <label for="Tname">Teacher Name</label>
+                <input type="text" id="Tname" name="Tname" placeholder="Teacher Name">
+
+                <label for="qalification">Qualification</label>
+                <input type="text" id="qalification" name="qalification" placeholder="Qualification">
+
+                <label for="designation">Designation</label>
+                <input type="text" id="designation" name="designation" placeholder="Designation">
+            </div>
+        </form>
+        <button id="downloadPdf">Download</button>
+    </div>
+
+    <script>
+        document.getElementById('editableForm').addEventListener('input', function(e) {
+            if (e.target.tagName === 'INPUT') {
+                const targetId = e.target.id + 'Text';
+                const targetElement = document.getElementById(targetId);
+                if (targetElement) {
+                    targetElement.textContent = e.target.value;
+                }
+            }
+        });
+
+
+
+        function generateStyledPDF() {
+            const { jsPDF } = window.jspdf;
+            const element = document.querySelector('.frontpage');
+
+            html2canvas(element, {
+                scale: 2,
+                useCORS: true,
+                logging: false,
+                allowTaint: true,
+            }).then(canvas => {
+                const imgData = canvas.toDataURL('image/png');
+                const pdf = new jsPDF({
+                    orientation: 'portrait',
+                    unit: 'px',
+                    format: [590, 842] // Match your frontpage dimensions
+                });
+
+                pdf.addImage(imgData, 'PNG', 0, 0, 590, 842);
+                pdf.save('styled_frontpage.pdf');
+            });
+        }
+
+        // Add click event listener to the download button
+        document.getElementById('downloadPdf').addEventListener('click', generateStyledPDF);
+
+
+
+
+
+        document.getElementById('SAdd').addEventListener('click', function() {
+    const name = document.getElementById('name').value;
+    const register = document.getElementById('register').value;
+
+    if (name && register) {
+        const studentDiv = document.createElement('div');
+        studentDiv.classList.add('student');
+
+        const nameDiv = document.createElement('div');
+        nameDiv.classList.add('name');
+        nameDiv.textContent = name;
+
+        const registerDiv = document.createElement('div');
+        registerDiv.classList.add('register');
+        registerDiv.textContent = register;
+
+        studentDiv.appendChild(nameDiv);
+        studentDiv.appendChild(registerDiv);
+
+        document.getElementById('studentsContainer').appendChild(studentDiv);
+
+        // Clear input fields after adding
+        document.getElementById('name').value = '';
+        document.getElementById('register').value = '';
+    } else {
+        alert('Please fill out both the Name and Register fields.');
+    }
+});
+
+document.getElementById('Sremove').addEventListener('click', function() {
+    const studentsContainer = document.getElementById('studentsContainer');
+    if (studentsContainer.lastElementChild && studentsContainer.lastElementChild.classList.contains('student')) {
+        studentsContainer.removeChild(studentsContainer.lastElementChild);
+    }
+});
+
+document.getElementById('TAdd').addEventListener('click', function() {
+    const teacherName = document.getElementById('Tname').value;
+    const qualification = document.getElementById('qalification').value;
+    const designation = document.getElementById('designation').value;
+
+    if (teacherName && qualification && designation) {
+        const teacherDiv = document.createElement('div');
+        teacherDiv.classList.add('persons');
+
+        const teacherInfoDiv = document.createElement('div');
+        teacherInfoDiv.classList.add('teacherInfo');
+
+        const nameSpan = document.createElement('span');
+        nameSpan.classList.add('Tname');
+        nameSpan.textContent = teacherName;
+
+        const qualificationSpan = document.createElement('span');
+        qualificationSpan.classList.add('qalification');
+        qualificationSpan.style.fontSize = '10px';
+        qualificationSpan.textContent = qualification;
+
+        const designationDiv = document.createElement('div');
+        designationDiv.classList.add('designation');
+        designationDiv.textContent = designation;
+
+        teacherInfoDiv.appendChild(nameSpan);
+        teacherInfoDiv.appendChild(qualificationSpan);
+        teacherDiv.appendChild(teacherInfoDiv);
+        teacherDiv.appendChild(designationDiv);
+
+        document.getElementById('teacherContainer').appendChild(teacherDiv);
+
+        // Clear input fields after adding
+        document.getElementById('Tname').value = '';
+        document.getElementById('qalification').value = '';
+        document.getElementById('designation').value = '';
+    } else {
+        alert('Please fill out the Teacher Name, Qualification, and Designation fields.');
+    }
+});
+
+document.getElementById('Tremove').addEventListener('click', function() {
+    const teacherContainer = document.getElementById('teacherContainer');
+    if (teacherContainer.lastElementChild && teacherContainer.lastElementChild.classList.contains('persons')) {
+        teacherContainer.removeChild(teacherContainer.lastElementChild);
+    }
+});
+
+    </script>
+</body>
+</html>
